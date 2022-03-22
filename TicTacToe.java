@@ -22,23 +22,33 @@ public class TicTacToe {
      */
     public void play() {
         // TODO: implementation
-        // print current board
         System.out.println(this.toString());
-        // ask for player move
         Scanner input = new Scanner(System.in);
-        String playerMove = input.nextLine();
-        // parse player move (how to check for inappropriate input?)
-        int row = Integer.parseInt(playerMove.substring(0, 1));
-        int col = Integer.parseInt(s)
-        // check player move validity
-        // make player move
-        // check for win
-        // ask for computer move
-        // make computer move
-        // check for win
-        // print current board
+        boolean validMove = false;
+        while (!validMove) {
+            System.out.println("Input the row number of your move: ");
+            int row = input.nextInt();
+            System.out.println("Input the column number of your move: ");
+            int col = input.nextInt();
+            if (this.board[row][col] == null) {
+                this.board[row][col] = "x";
+                validMove = true;
+            }
+        }
+        if (this.getWinner() == "Player") {
+            System.out.println("You won! Would you like to play again?" +
+                "(Type Y/N): ");
+            String replayChoice = input.nextLine().toLowerCase();
+            if (replayChoice.equals("y")) {
+                this.play();
+            }
+        } else {
+            // ask for computer move
+            // make computer move
+            // check for win
+        }
+        // how to prevent crash when given inappropriate input?
         System.out.println(this.toString());
-        // depending on if game ends, repeat or end game
     }
 
     // get the user input
