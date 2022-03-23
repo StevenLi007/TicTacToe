@@ -1,5 +1,9 @@
 /**
  * TODO: file header
+ * 
+ * Sources:
+ * Checking for inappropriate user input: https://kodejava.org/how-do-i-validate-input-when-using-scanner/#:~:text=To%20validate%20input%20the%20Scanner,provide%20a%20positive%20integer%20number.
+ * How to format text: https://www.javatpoint.com/java-string-format
  */
 import java.util.Scanner;
 
@@ -19,21 +23,28 @@ public class TicTacToe {
     /**
      * Plays the game.
      * TODO: it relies on many helper methods; how do we make that clear (curr description a bit vague)?
+     * TODO: I'm concerned that this method is a bit large; make sure that it's self documenting and has a specific role
      */
     public void play() {
         // TODO: implementation
         System.out.println(this.toString());
         Scanner input = new Scanner(System.in);
-        boolean validMove = false;
-        while (!validMove) {
-            System.out.println("Input the row number of your move: ");
-            int row = input.nextInt();
-            System.out.println("Input the column number of your move: ");
-            int col = input.nextInt();
-            if (this.board[row][col] == null) {
-                this.board[row][col] = "x";
-                validMove = true;
+        System.out.println("Input the row number of your move: ");
+        if (input.hasNextInt()) {
+            if (input.nextInt() >= 1 && input.nextInt() <= 3) {
+                int row = input.nextInt();
             }
+
+        }
+        while (!input.hasNextInt() || input.nextInt() > 3) {
+            String invalidRow = input.next();
+            System.out.println(String.format("%s is not a valid row number", invalidRow));
+        }
+        int row = input.nextInt();
+        System.out.println("Input the column number of your move: ");
+        int col = input.nextInt();
+        if (this.board[row][col] == null) {
+            this.board[row][col] = "x";
         }
         if (this.getWinner() == "Player") {
             System.out.println("You won! Would you like to play again?" +
