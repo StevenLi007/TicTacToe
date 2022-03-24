@@ -18,56 +18,11 @@ public class TicTacToe {
      */
     public TicTacToe() {
         this.board = new String[3][3];
-    }
-
-    /**
-     * Plays the game.
-     * TODO: it relies on many helper methods; how do we make that clear (curr description a bit vague)?
-     * TODO: I'm concerned that this method is a bit large; make sure that it's self documenting and has a specific role
-     */
-    public void play() {
-        // TODO: implementation
-        System.out.println(this.toString());
-        Scanner input = new Scanner(System.in);
-        System.out.println("Input the row number of your move: ");
-        if (input.hasNextInt()) {
-            if (input.nextInt() >= 1 && input.nextInt() <= 3) {
-                int row = input.nextInt();
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length; c++) {
+                this.board[r][c] = "-";
             }
-
         }
-        while (!input.hasNextInt() || input.nextInt() > 3) {
-            String invalidRow = input.next();
-            System.out.println(String.format("%s is not a valid row number", invalidRow));
-        }
-        int row = input.nextInt();
-        System.out.println("Input the column number of your move: ");
-        int col = input.nextInt();
-        if (this.board[row][col] == null) {
-            this.board[row][col] = "x";
-        }
-        if (this.getWinner() == "Player") {
-            System.out.println("You won! Would you like to play again?" +
-                "(Type Y/N): ");
-            String replayChoice = input.nextLine().toLowerCase();
-            if (replayChoice.equals("y")) {
-                this.play();
-            }
-        } else {
-            // ask for computer move
-            // make computer move
-            // check for win
-        }
-        // how to prevent crash when given inappropriate input?
-        System.out.println(this.toString());
-    }
-
-    // get the user input
-    // what format?
-    // this may be unnecessary
-    public String getPlayerMove() {
-        // TODO: implementation
-        return "";
     }
 
     // generate computer move
@@ -77,8 +32,12 @@ public class TicTacToe {
         return "";
     }
 
-    // has anyone won?
-    // is there an efficient way to check?
+    /**
+     * Returns the winner of the game or
+     * null if no one has won yet
+     * @return the winner of the game or
+     * null if no one has won yet
+     */
     public String getWinner() {
         // TODO: implementation
         return "";
@@ -91,12 +50,30 @@ public class TicTacToe {
      * game board.
      */
     public String toString() {
-        // TODO: implementation
-        return "";
+        String board = "";
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length; c++) {
+                board += this.board[r][c] + " ";
+            }
+            board += "\n";
+        }
+        return board;
     }
 
+    /**
+     * Plays the game with helper methods.
+     * TODO: does main() need a documentation?
+     * @param args
+     */
     public static void main(String[] args) {
         TicTacToe game = new TicTacToe();
-        game.play();
+        System.out.println(game.toString());
+        // ask for user input
+        Scanner in = new Scanner(System.in);
+        System.out.println("Please enter the row number of your move: ");
+        while (!in.hasNextInt()) {
+            String invalidRow = in.nextLine();
+            System.out.printf("%s is not a valid row", invalidRow);
+        }
     }
 }
