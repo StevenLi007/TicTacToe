@@ -21,6 +21,13 @@ public class TicTacToe {
     private static final String COMPUTER_SYMBOL = "0";
     private static final String PLAYER_WON = "Player Won!";
     private static final String COMPUTER_WON = "Computer Won!";
+    private static final String ASK_FOR_ROW = "Please enter the row number " + 
+        "of your move: ";
+    private static final String INVALID_ROW = "%s is not a valid row";
+    private static final String ASK_FOR_COL = "Please enter the column number " + 
+        "of your move: ";
+    private static final String INVALID_COL = "%s is not a valid column";
+    private static final String INVALID_MOVE = "Invalid move. Please try again.";
 
     /**
      * Initializes an empty 3x3 board.
@@ -50,7 +57,7 @@ public class TicTacToe {
             }
         }
         int numAvailableSpots = availableRow.size();
-        int randIdx = (int) Math.random() * numAvailableSpots;
+        int randIdx = (int) (Math.random() * numAvailableSpots);
         String row = Integer.toString(availableRow.get(randIdx));
         String col = Integer.toString(availableCol.get(randIdx));
         return row + col;
@@ -124,8 +131,7 @@ public class TicTacToe {
 
     /**
      * Plays the game with helper methods.
-     * TODO: does main() need a documentation?
-     * @param args
+     * @param args not used in this method
      */
     public static void main(String[] args) {
         TicTacToe game = new TicTacToe();
@@ -135,24 +141,42 @@ public class TicTacToe {
             Scanner in = new Scanner(System.in);
             boolean moveComplete = false;
             while (!moveComplete) {
-                System.out.println("Please enter the row number of your move: ");
-                while (!in.hasNextInt()) {
-                    // wrong way of comparing
-                    if (in.nextInt() < 1 || in.nextInt() > DIMENSION) {
-                        System.out.println("i ran");
+                System.out.println(ASK_FOR_ROW);
+                boolean validRow = false;
+                int row = 0;
+                while (!validRow) {
+                    if (!in.hasNextInt()) {
+                        String invalidRow = in.next();
+                        System.out.printf(INVALID_ROW, invalidRow);
+                    } else {
+                        int playerRow = in.nextInt();
+                        if (playerRow < 1 || playerRow > DIMENSION) {
+                            System.out.printf(INVALID_ROW, playerRow);
+                        } else {
+                            row = playerRow;
+                            validRow = true;
+                        }
                     }
-                    String invalidRow = in.next();
-                    System.out.printf("%s is not a valid row", invalidRow);
                 }
-                int row = in.nextInt();
-                System.out.println("Please enter the column number of your move: ");
-                while (!in.hasNextInt() || in.nextInt() < 1 || in.nextInt() > DIMENSION) {
-                    String invalidRow = in.nextLine();
-                    System.out.printf("%s is not a valid row", invalidRow);
+                System.out.println(ASK_FOR_COL);
+                boolean validCol = false;
+                int col = 0;
+                while (!validCol) {
+                    if (!in.hasNextInt()) {
+                        String invalidCol = in.next();
+                        System.out.printf(INVALID_COL, invalidCol);
+                    } else {
+                        int playerCol = in.nextInt();
+                        if (playerCol < 1 || playerCol > DIMENSION) {
+                            System.out.printf(INVALID_COL, playerCol);
+                        } else {
+                            col = playerCol;
+                            validCol = true;
+                        }
+                    }
                 }
-                int col = in.nextInt();
-                if (!game.board[row][col].equals(EMPTY_SYMBOL)) {
-                    System.out.println("Invalid move. Please try again");
+                if (!game.board[row - 1][col - 1].equals(EMPTY_SYMBOL)) {
+                    System.out.println(INVALID_MOVE);
                 } else {
                     moveComplete = true;
                     game.board[row - 1][col - 1] = PLAYER_SYMBOL;
