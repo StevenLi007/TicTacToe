@@ -1,5 +1,7 @@
 /**
- * TODO: file header
+ * This file contains the implementation of a Tic Tac Toe game
+ * that can be generalized to an N-in-a-row game played with an
+ * NxN game board.
  * 
  * Sources:
  * Checking for inappropriate user input: https://kodejava.org/how-do-i-validate-input-when-using-scanner/#:~:text=To%20validate%20input%20the%20Scanner,provide%20a%20positive%20integer%20number.
@@ -10,7 +12,9 @@ import java.util.Scanner;
 import java.lang.Math;
 
 /**
- * TODO: class header
+ * This class uses a String[][] to represent the Tic Tac Toe board.
+ * It can register player input and use a pseudorandom method to 
+ * generate a computer move. It will also check for wins.
  */
 public class TicTacToe {
     String[][] board;
@@ -28,6 +32,8 @@ public class TicTacToe {
         "of your move: ";
     private static final String INVALID_COL = "%s is not a valid column";
     private static final String INVALID_MOVE = "Invalid move. Please try again.";
+    private static final String COMPUTER_MOVE = "The computer chose to move " + 
+        "to (%s, %s).";
 
     /**
      * Initializes an empty 3x3 board.
@@ -66,13 +72,20 @@ public class TicTacToe {
     /**
      * Returns the winner of the game or null if no one has won yet
      * @return the winner of the game or null if no one has won yet
-     * TODO: get rid of the magic numbers
      */
     public String getWinner() {
+        boolean rowWinner = false;
         for (int r = 0; r < this.board.length; r++) {
-            if (this.board[r][0].equals(this.board[r][1]) && 
-                    this.board[r][1].equals(this.board[r][2]) &&
-                    !this.board[r][0].equals(EMPTY_SYMBOL)) {
+            for (int c = 0; c < this.board[0].length - 1; c++) {
+                if (this.board[r][c].equals(this.board[r][c + 1]) &&
+                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                    rowWinner = true;
+                } else {
+                    rowWinner = false;
+                    break;
+                }
+            }
+            if (rowWinner) {
                 if (this.board[r][0].equals(PLAYER_SYMBOL)) {
                     return PLAYER_WON;
                 } else {
@@ -80,10 +93,18 @@ public class TicTacToe {
                 }
             }
         }
+        boolean colWinner = false;
         for (int c = 0; c < this.board[0].length; c++) {
-            if (this.board[0][c].equals(this.board[1][c]) && 
-                    this.board[1][c].equals(this.board[2][c]) &&
-                    !this.board[0][c].equals(EMPTY_SYMBOL)) {
+            for (int r = 0; r < this.board.length - 1; r++) {
+                if (this.board[r][c].equals(this.board[r + 1][c]) &&
+                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                    colWinner = true;
+                } else {
+                    colWinner = false;
+                    break;
+                }
+            }
+            if (colWinner) {
                 if (this.board[0][c].equals(PLAYER_SYMBOL)) {
                     return PLAYER_WON;
                 } else {
@@ -91,23 +112,37 @@ public class TicTacToe {
                 }
             }
         }
-        if (this.board[0][0].equals(this.board[1][1]) && 
-                this.board[1][1].equals(this.board[2][2]) &&
-                !this.board[0][0].equals(EMPTY_SYMBOL)) {
-            if (this.board[0][0].equals(PLAYER_SYMBOL)) {
-                return PLAYER_WON;
-            } else {
-                return COMPUTER_WON;
-            }        
+        boolean diag1Winner = false;
+        for (int r = 0; r < this.board.length - 1; r++) {
+            for (int c = 0; c < this.board[0].length - 1; c++) {
+                if (this.board[r][c].equals(this.board[r + 1][c + 1]) &&
+                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                    diag1Winner = true;
+                } else {
+                    diag1Winner = false;
+                    break;
+                }
+            }
         }
-        if (this.board[0][2].equals(this.board[1][1]) && 
-                this.board[1][1].equals(this.board[2][0]) &&
-                !this.board[0][0].equals(EMPTY_SYMBOL)) {
-            if (this.board[0][0].equals(PLAYER_SYMBOL)) {
+        boolean diag2Winner = false;
+        for (int r = 0; r < this.board.length - 1; r++) {
+            for (int c = this.board[0].length - 1; c > 0; c--) {
+                if (this.board[r][c].equals(this.board[r + 1][c - 1]) &&
+                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                    diag2Winner = true;
+                } else {
+                    diag2Winner = false;
+                    break;
+                }
+            }
+        }
+        if (diag1Winner || diag2Winner) {
+            if (this.board[this.board.length - 1][0].equals(PLAYER_SYMBOL) || 
+                    this.board[0][0].equals(PLAYER_SYMBOL)) {
                 return PLAYER_WON;
             } else {
                 return COMPUTER_WON;
-            }        
+            }
         }
         return null;
     }
@@ -150,7 +185,7 @@ public class TicTacToe {
                         System.out.printf(INVALID_ROW, invalidRow);
                     } else {
                         int playerRow = in.nextInt();
-                        if (playerRow < 1 || playerRow > DIMENSION) {
+                        if (playerRow < 1 || playerRow > game.board.length) {
                             System.out.printf(INVALID_ROW, playerRow);
                         } else {
                             row = playerRow;
@@ -167,7 +202,7 @@ public class TicTacToe {
                         System.out.printf(INVALID_COL, invalidCol);
                     } else {
                         int playerCol = in.nextInt();
-                        if (playerCol < 1 || playerCol > DIMENSION) {
+                        if (playerCol < 1 || playerCol > game.board.length) {
                             System.out.printf(INVALID_COL, playerCol);
                         } else {
                             col = playerCol;
@@ -183,19 +218,20 @@ public class TicTacToe {
                 }
             }
             System.out.println(game.toString());
-            String computerMove = game.getComputerMove();
-            int computerMoveRow = Integer.parseInt(computerMove.substring(0, 1));
-            int computerMoveCol = Integer.parseInt(computerMove.substring(1, 2));
-            System.out.println("The computer chose to move to (" + computerMoveRow + ", " + computerMoveCol + ").");
-            game.board[computerMoveRow][computerMoveCol] = COMPUTER_SYMBOL;
-            System.out.println(game.toString());
-            String winner = game.getWinner();
-            if (winner != null) {
+            if (game.getWinner() != null) {
+                System.out.println(game.getWinner());
                 running = false;
-                if (winner.equals(PLAYER_WON)) {
-                    System.out.println(PLAYER_WON);
-                } else {
-                    System.out.println(COMPUTER_WON);
+            } else {
+                String computerMove = game.getComputerMove();
+                int computerMoveRow = Integer.parseInt(computerMove.substring(0, 1));
+                int computerMoveCol = Integer.parseInt(computerMove.substring(1));
+                System.out.printf(COMPUTER_MOVE, computerMoveRow, computerMoveCol);
+                System.out.println();
+                game.board[computerMoveRow][computerMoveCol] = COMPUTER_SYMBOL;
+                System.out.println(game.toString());
+                if (game.getWinner() != null) {
+                    System.out.println(game.getWinner());
+                    running = false;
                 }
             }
         }
