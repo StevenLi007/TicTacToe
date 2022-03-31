@@ -19,7 +19,7 @@ import java.lang.Math;
 public class TicTacToe {
     String[][] board;
 
-    private static final int DIMENSION = 3;
+    private static final int DIMENSION = 4;
     private static final String EMPTY_SYMBOL = "-";
     private static final String PLAYER_SYMBOL = "x";
     private static final String COMPUTER_SYMBOL = "0";
@@ -70,8 +70,96 @@ public class TicTacToe {
     }
 
     /**
+     * Checks for possible ways in which the player can win and
+     * selects a move to deter that
+     * @return a computer that prevents the player from winning
+     */
+    public String computerDefense() {
+        String rowToDefend = "";
+        String colToDefend = "";
+        boolean hasComputerSymbolInRow = false;
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length - 1; c++) {
+                if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                    hasComputerSymbolInRow = true;
+                }
+            }
+            if (!hasComputerSymbolInRow) {
+                for (int c = 0; c < this.board[0].length; c++) {
+                    if (this.board[r][c].equals(EMPTY_SYMBOL)) {
+                        rowToDefend = Integer.toString(r);
+                        colToDefend = Integer.toString(c);
+                        return rowToDefend + colToDefend;
+                    }
+                }
+            }
+        }
+        boolean hasComputerSymbolInCol = false;
+        for (int c = 0; c < this.board[0].length; c++) {
+            for (int r = 0; r < this.board.length - 1; r++) {
+                if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                    hasComputerSymbolInCol = true;
+                }
+            }
+            if (!hasComputerSymbolInCol) {
+                for (int r = 0; r < this.board[0].length; r++) {
+                    if (this.board[r][c].equals(EMPTY_SYMBOL)) {
+                        rowToDefend = Integer.toString(r);
+                        colToDefend = Integer.toString(c);
+                        return rowToDefend + colToDefend;
+                    }
+                }
+            }
+        }
+        boolean hasComputerSymbolInDiag1 = false;
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length; c++) {
+                if (r == c) {
+                    if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                        hasComputerSymbolInDiag1 = true;
+                    }
+                }
+            }
+        }
+        if (!hasComputerSymbolInDiag1) {
+            for (int r = 0; r < this.board.length; r++) {
+                for (int c = 0; c < this.board[0].length; c++) {
+                    if (r == c && this.board[r][c].equals(EMPTY_SYMBOL)) {
+                        rowToDefend = Integer.toString(r);
+                        colToDefend = Integer.toString(c);
+                        return rowToDefend + colToDefend;
+                    }
+                }
+            }
+        }
+        boolean hasComputerSymbolInDiag2 = false;
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = this.board[0].length - 1; c >= 0; c--) {
+                if (r == c) {
+                    if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                        hasComputerSymbolInDiag2 = true;
+                    }
+                }
+            }
+        }
+        if (!hasComputerSymbolInDiag2) {
+            for (int r = 0; r < this.board.length; r++) {
+                for (int c = this.board[0].length - 1; c >= 0; c--) {
+                    if (r == c && this.board[r][c].equals(EMPTY_SYMBOL)) {
+                        rowToDefend = Integer.toString(r);
+                        colToDefend = Integer.toString(c);
+                        return rowToDefend + colToDefend;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the winner of the game or null if no one has won yet
      * @return the winner of the game or null if no one has won yet
+     * TODO: doesn't work with diagonals in larger dimensions
      */
     public String getWinner() {
         boolean rowWinner = false;
@@ -113,37 +201,71 @@ public class TicTacToe {
             }
         }
         boolean diag1Winner = false;
-        for (int r = 0; r < this.board.length - 1; r++) {
-            for (int c = 0; c < this.board[0].length - 1; c++) {
-                if (this.board[r][c].equals(this.board[r + 1][c + 1]) &&
-                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
-                    diag1Winner = true;
-                } else {
-                    diag1Winner = false;
-                    break;
+        String currSymbolDiag1 = this.board[0][0];
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length; c++) {
+                if (r == c) {
+                    String newSymbol = this.board[r][c];
+                    if (currSymbolDiag1.equals(newSymbol)) {
+                        diag1Winner = true;
+                    } else {
+                        diag1Winner = false;
+                        break;
+                    }
                 }
+                // if (this.board[r][c].equals(this.board[r + 1][c + 1]) &&
+                //         !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                //     diag1Winner = true;
+                // } else {
+                //     diag1Winner = false;
+                //     break;
+                // }
             }
         }
-        boolean diag2Winner = false;
-        for (int r = 0; r < this.board.length - 1; r++) {
-            for (int c = this.board[0].length - 1; c > 0; c--) {
-                if (this.board[r][c].equals(this.board[r + 1][c - 1]) &&
-                        !(this.board[r][c].equals(EMPTY_SYMBOL))) {
-                    diag2Winner = true;
-                } else {
-                    diag2Winner = false;
-                    break;
-                }
-            }
-        }
-        if (diag1Winner || diag2Winner) {
-            if (this.board[this.board.length - 1][0].equals(PLAYER_SYMBOL) || 
-                    this.board[0][0].equals(PLAYER_SYMBOL)) {
+        if (diag1Winner) {
+            if (this.board[0][0].equals(PLAYER_SYMBOL)) {
                 return PLAYER_WON;
             } else {
                 return COMPUTER_WON;
             }
         }
+        boolean diag2Winner = false;
+        String currSymbolDiag2 = this.board[0][this.board[0].length - 1];
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = this.board[0].length; c > 0; c--) {
+                if (r + c == this.board.length - 1) {
+                    String newSymbol = this.board[r][c];
+                    if (currSymbolDiag2.equals(newSymbol)) {
+                        diag2Winner = true;
+                    } else {
+                        diag2Winner = false;
+                        break;
+                    }
+                }
+                // if (this.board[r][c].equals(this.board[r + 1][c - 1]) &&
+                //         !(this.board[r][c].equals(EMPTY_SYMBOL))) {
+                //     diag2Winner = true;
+                // } else {
+                //     diag2Winner = false;
+                //     break;
+                // }
+            }
+        }
+        if (diag2Winner) {
+            if (this.board[0][this.board[0].length - 1].equals(PLAYER_SYMBOL)) {
+                return PLAYER_WON;
+            } else {
+                return COMPUTER_WON;
+            }
+        }
+        // if (diag1Winner || diag2Winner) {
+        //     if (this.board[this.board.length - 1][0].equals(PLAYER_SYMBOL) || 
+        //             this.board[0][0].equals(PLAYER_SYMBOL)) {
+        //         return PLAYER_WON;
+        //     } else {
+        //         return COMPUTER_WON;
+        //     }
+        // }
         return null;
     }
 
