@@ -52,21 +52,113 @@ public class TicTacToe {
      * @return the concatenation of the row and column number of the move
      */
     public String getComputerMove() {
-        ArrayList<Integer> availableRow = new ArrayList<>();
-        ArrayList<Integer> availableCol = new ArrayList<>();
+        String smartMove = this.getSmartComputerMove();
+        if (smartMove == null) {
+            ArrayList<Integer> availableRow = new ArrayList<>();
+            ArrayList<Integer> availableCol = new ArrayList<>();
+            for (int r = 0; r < this.board.length; r++) {
+                for (int c = 0; c < this.board[0].length; c++) {
+                    if (this.board[r][c].equals(EMPTY_SYMBOL)) {
+                        availableRow.add(r);
+                        availableCol.add(c);
+                    }
+                }
+            }
+            int numAvailableSpots = availableRow.size();
+            int randIdx = (int) (Math.random() * numAvailableSpots);
+            String row = Integer.toString(availableRow.get(randIdx));
+            String col = Integer.toString(availableCol.get(randIdx));
+            return row + col;
+        }
+        return smartMove;
+    }
+
+    /**
+     * Searches for potential win conditions and suggests a
+     * potential move for the computer to thwart the player.
+     * @return suggested move that hinders the player
+     */
+    public String getSmartComputerMove() {
+        // if there's a player symbol in a row, mark that row and choose an empty spot to play
+        boolean hasComputerSymbolInRow = false;
         for (int r = 0; r < this.board.length; r++) {
             for (int c = 0; c < this.board[0].length; c++) {
-                if (this.board[r][c].equals(EMPTY_SYMBOL)) {
-                    availableRow.add(r);
-                    availableCol.add(c);
+                if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                    hasComputerSymbolInRow = true;
+                    break;
+                }
+            }
+            if (!hasComputerSymbolInRow) {
+                for (int i = 0; i < this.board[0].length; i++) {
+                    if (this.board[r][i].equals(EMPTY_SYMBOL)) {
+                        return Integer.toString(r) + Integer.toString(i);
+                    }
                 }
             }
         }
-        int numAvailableSpots = availableRow.size();
-        int randIdx = (int) (Math.random() * numAvailableSpots);
-        String row = Integer.toString(availableRow.get(randIdx));
-        String col = Integer.toString(availableCol.get(randIdx));
-        return row + col;
+        // if there's a player symbol in a col, mark that row and choose an empty spot to play
+        boolean hasComputerSymbolInCol = false;
+        for (int c = 0; c < this.board[0].length; c++) {
+            for (int r = 0; r < this.board.length; r++) {
+                if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                    hasComputerSymbolInCol = true;
+                    break;
+                }
+            }
+            if (!hasComputerSymbolInCol) {
+                for (int i = 0; i < this.board.length; i++) {
+                    if (this.board[i][c].equals(EMPTY_SYMBOL)) {
+                        return Integer.toString(i) + Integer.toString(c);
+                    }
+                }
+            }
+        }
+        // if there's a player symbol in a diag, mark that row and choose an empty spot to play
+        boolean hasComputerSymbolInDiag1 = false;
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = 0; c < this.board[0].length; c++) {
+                if (r == c) {
+                    if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                        hasComputerSymbolInDiag1 = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!hasComputerSymbolInDiag1) {
+            for (int r = 0; r < this.board.length; r++) {
+                for (int c = 0; c < this.board[0].length; c++) {
+                    if (r == c) {
+                        if (this.board[r][c].equals(EMPTY_SYMBOL)) {
+                            return Integer.toString(r) + Integer.toString(c);
+                        }
+                    }
+                }
+            }
+        }
+        boolean hasComputerSymbolInDiag2 = false;
+        for (int r = 0; r < this.board.length; r++) {
+            for (int c = this.board[0].length; c > -1; c--) {
+                if (r + c == DIMENSION - 1) {
+                    if (this.board[r][c].equals(COMPUTER_SYMBOL)) {
+                        hasComputerSymbolInDiag2 = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!hasComputerSymbolInDiag2) {
+            for (int r = 0; r < this.board.length; r++) {
+                for (int c = this.board[0].length; c > -1; c--) {
+                    if (r + c == DIMENSION - 1) {
+                        if (this.board[r][c].equals(EMPTY_SYMBOL)) {
+                            return Integer.toString(r) + Integer.toString(c);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -229,7 +321,7 @@ public class TicTacToe {
                 String computerMove = game.getComputerMove();
                 int computerMoveRow = Integer.parseInt(computerMove.substring(0, 1));
                 int computerMoveCol = Integer.parseInt(computerMove.substring(1));
-                System.out.printf(COMPUTER_MOVE, computerMoveRow, computerMoveCol);
+                System.out.printf(COMPUTER_MOVE, computerMoveRow + 1, computerMoveCol + 1);
                 System.out.println();
                 game.board[computerMoveRow][computerMoveCol] = COMPUTER_SYMBOL;
                 System.out.println(game.toString());
