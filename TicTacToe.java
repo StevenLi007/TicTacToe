@@ -128,12 +128,11 @@ public class TicTacToe {
         }
         boolean diag2Winner = false;
         for (int r = 0; r < this.board.length - 1; r++) {
-            for (int c = this.board[0].length - 1; c > 0; c--) {
+            for (int c = this.board[0].length - 1; c > -1; c--) {
                 if ((r + c) == DIMENSION - 1) {
                     if (this.board[r][c].equals(this.board[r + 1][c - 1]) &&
                             !(this.board[r][c].equals(EMPTY_SYMBOL))) {
                         diag2Winner = true;
-                        // TODO: add print statements to debug
                     } else {
                         diag2Winner = false;
                         break;
